@@ -6,9 +6,11 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { Expanse, Prisma } from '@prisma/client';
+import JwtAuthenticationGuard from 'src/authentication/jwt-authentication.guard';
 import { NotFoundInterceptor } from 'src/NotFoundInterceptor';
 import { ExpansesService } from './expanses.service';
 
@@ -16,11 +18,13 @@ import { ExpansesService } from './expanses.service';
 export class ExpansesController {
   constructor(private readonly expansesService: ExpansesService) {}
 
+  @UseGuards(JwtAuthenticationGuard)
   @Get()
   async getAllExpanses(): Promise<Expanse[]> {
     return this.expansesService.getAllExpanses();
   }
 
+  @UseGuards(JwtAuthenticationGuard)
   @Get(':id')
   @UseInterceptors(NotFoundInterceptor)
   async getExpanseById(
@@ -29,6 +33,7 @@ export class ExpansesController {
     return this.expansesService.getExpanse(id);
   }
 
+  @UseGuards(JwtAuthenticationGuard)
   @Post()
   async createExpanse(
     @Body() expanse: Prisma.ExpanseCreateInput,
@@ -36,6 +41,7 @@ export class ExpansesController {
     return this.expansesService.createExpanse(expanse);
   }
 
+  @UseGuards(JwtAuthenticationGuard)
   @Patch(':id')
   @UseInterceptors(NotFoundInterceptor)
   async updateExpanse(
@@ -50,6 +56,7 @@ export class ExpansesController {
     });
   }
 
+  @UseGuards(JwtAuthenticationGuard)
   @Delete(':id')
   @UseInterceptors(NotFoundInterceptor)
   async deleteExpanse(
