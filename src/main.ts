@@ -9,7 +9,7 @@ async function bootstrap() {
   app.useGlobalFilters(new PrismaExceptionFilter());
   app.use(cookieParser());
   app.enableCors({
-    origin: 'http://expanses-app-clientside-production.up.railway.app',
+    origin: 'https://expanses-app-clientside-production.up.railway.app',
     credentials: true,
   });
 
