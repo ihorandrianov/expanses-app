@@ -62,6 +62,12 @@ export class ExpansesController {
   async deleteExpanse(
     @Param('id') id: Prisma.ExpanseWhereUniqueInput,
   ): Promise<Expanse> {
-    return this.deleteExpanse(id);
+    return this.expansesService.deleteExpanse(id);
+  }
+
+  @UseGuards(JwtAuthenticationGuard)
+  @Post('user-expanses')
+  async getExpansesByUserId(@Body() id: { id: number }) {
+    return this.expansesService.getExpansesByUserId(id.id);
   }
 }
