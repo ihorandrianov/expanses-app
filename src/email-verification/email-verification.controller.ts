@@ -11,7 +11,6 @@ export class EmailVerificationController {
   ) {}
 
   @Post('confirm')
-  @UseGuards(JwtAuthenticationGuard)
   async confirm(@Body() confirmationData: ConfirmEmailDto) {
     const email = await this.emailVerificationService.decodeConfirmationToken(
       confirmationData.token,
