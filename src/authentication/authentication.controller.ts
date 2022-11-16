@@ -10,18 +10,23 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { Prisma } from '@prisma/client';
 import { Response } from 'express';
 import { EmailVerificationService } from 'src/email-verification/email-verification.service';
 import { RemovePasswordInterceptor } from 'src/removePassword.interceptor';
 import { UsersService } from 'src/users/users.service';
 import { AuthenticationService } from './authentication.service';
+import { ChangePasswordDto } from './change-password.dto';
+import { CreateUserDto } from './create-user.dto';
 import JwtAuthenticationGuard from './jwt-authentication.guard';
 import JwtRefreshGuard from './jwtRefresh.guard';
 import { LocalAuthenticationGuard } from './localAuthentication.guard';
+import { LogInDto } from './log-in.dto';
 import RequestWithUser from './requestWithUser.interface';
 
 @Controller('auth')
+@ApiTags('auth')
 export class AuthenticationController {
   constructor(
     private readonly authenticationService: AuthenticationService,
@@ -40,7 +45,7 @@ export class AuthenticationController {
 
   @Post('register')
   @UseInterceptors(RemovePasswordInterceptor)
-  async register(@Body() registrationData: Prisma.UserCreateInput) {
+  async register(@Body() registrationData: CreateUserDto) {
     const user = await this.authenticationService.register(registrationData);
     await this.verifyEmailService.sendVerificationLink(user.email);
 
@@ -50,6 +55,7 @@ export class AuthenticationController {
   @HttpCode(200)
   @UseGuards(LocalAuthenticationGuard)
   @Post('log-in')
+  @ApiBody({ type: LogInDto })
   async logIn(@Req() request: RequestWithUser, @Res() response: Response) {
     const user = request.user;
     const accesToken = this.authenticationService.getCookieWithJwtToken(
@@ -91,7 +97,7 @@ export class AuthenticationController {
   @HttpCode(200)
   @UseGuards(JwtAuthenticationGuard)
   @Patch('password-change')
-  async changePassword(@Body() body) {
+  async changePassword(@Body() body: ChangePasswordDto) {
     const { userId, oldPassword, newPassword, confirmationPassword } = body;
 
     const user = this.authenticationService.resetPassword(

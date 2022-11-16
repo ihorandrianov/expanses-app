@@ -9,12 +9,15 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Expanse, Prisma } from '@prisma/client';
 import JwtAuthenticationGuard from 'src/authentication/jwt-authentication.guard';
 import { NotFoundInterceptor } from 'src/NotFoundInterceptor';
+import { CreateExpanseDto, UpdateExpanseDto } from './create-expanse.dto';
 import { ExpansesService } from './expanses.service';
 
 @Controller('/expanses')
+@ApiTags('expanses')
 export class ExpansesController {
   constructor(private readonly expansesService: ExpansesService) {}
 
@@ -35,9 +38,7 @@ export class ExpansesController {
 
   @UseGuards(JwtAuthenticationGuard)
   @Post()
-  async createExpanse(
-    @Body() expanse: Prisma.ExpanseCreateInput,
-  ): Promise<Expanse> {
+  async createExpanse(@Body() expanse: CreateExpanseDto): Promise<Expanse> {
     return this.expansesService.createExpanse(expanse);
   }
 
@@ -45,8 +46,8 @@ export class ExpansesController {
   @Patch(':id')
   @UseInterceptors(NotFoundInterceptor)
   async updateExpanse(
-    @Param('id') id: Prisma.ExpanseWhereUniqueInput,
-    @Body() expanse: Prisma.ExpanseUpdateInput,
+    @Param('id') id: number,
+    @Body() expanse: UpdateExpanseDto,
   ): Promise<Expanse> {
     return this.expansesService.updateExpanse({
       where: {
@@ -66,8 +67,8 @@ export class ExpansesController {
   }
 
   @UseGuards(JwtAuthenticationGuard)
-  @Post('user-expanses')
-  async getExpansesByUserId(@Body() id: { id: number }) {
-    return this.expansesService.getExpansesByUserId(id.id);
+  @Get('user-expanses/:id')
+  async getExpansesByUserId(@Param('id') id: number) {
+    return this.expansesService.getExpansesByUserId(id);
   }
 }

@@ -1,10 +1,12 @@
 import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import JwtAuthenticationGuard from 'src/authentication/jwt-authentication.guard';
 import RequestWithUser from 'src/authentication/requestWithUser.interface';
 import ConfirmEmailDto from './confirmEnail.dto';
 import { EmailVerificationService } from './email-verification.service';
 
 @Controller('email-verification')
+@ApiTags('email-verification')
 export class EmailVerificationController {
   constructor(
     private readonly emailVerificationService: EmailVerificationService,

@@ -10,12 +10,18 @@ import {
   Post,
   UseInterceptors,
 } from '@nestjs/common';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { Expanse, Prisma, User } from '@prisma/client';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+} from 'src/authentication/create-user.dto';
 import { ExcludeNullInterceptor } from 'src/NonNullInterceptor';
 import { NotFoundInterceptor } from 'src/NotFoundInterceptor';
 import { UsersService } from './users.service';
 
 @Controller('users')
+@ApiTags('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -32,7 +38,7 @@ export class UsersController {
 
   @Post()
   @UseInterceptors(ExcludeNullInterceptor)
-  async createUser(@Body() user: Prisma.UserCreateInput): Promise<User> {
+  async createUser(@Body() user: CreateUserDto): Promise<User> {
     if (user === undefined) {
       throw new HttpException('No info provided', HttpStatus.BAD_REQUEST);
     }
@@ -41,6 +47,7 @@ export class UsersController {
 
   @Patch(':id')
   @UseInterceptors(NotFoundInterceptor)
+  @ApiBody({ type: UpdateUserDto })
   async updateUser(
     @Param('id') id: Prisma.UserWhereUniqueInput,
     @Body() user: Prisma.UserUpdateInput,
@@ -55,16 +62,14 @@ export class UsersController {
 
   @Delete(':id')
   @UseInterceptors(NotFoundInterceptor)
-  async deleteUser(
-    @Param('id') id: Prisma.UserWhereUniqueInput,
-  ): Promise<User> {
+  async deleteUser(@Param('id') id: number): Promise<User> {
     return this.usersService.deleteUser({ id: Number(id) });
   }
 
   @Get(':id/expanses')
   @UseInterceptors(NotFoundInterceptor)
   async getUserExpanses(
-    @Param('id') id: Prisma.UserWhereUniqueInput,
+    @Param('id') id: number,
   ): Promise<{ expanses: Expanse[] }> {
     return this.usersService.getUserExpanses({ id: Number(id) });
   }
