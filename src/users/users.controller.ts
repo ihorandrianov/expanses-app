@@ -69,8 +69,11 @@ export class UsersController {
   @Get(':id/expanses')
   @UseInterceptors(NotFoundInterceptor)
   async getUserExpanses(
-    @Param('id') id: number,
+    @Param('id') id: string,
   ): Promise<{ expanses: Expanse[] }> {
-    return this.usersService.getUserExpanses({ id: Number(id) });
+    const expanses = await this.usersService.getUserExpanses({
+      id: Number(id),
+    });
+    return expanses;
   }
 }

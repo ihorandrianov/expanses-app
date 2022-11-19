@@ -65,10 +65,4 @@ export class ExpansesController {
   ): Promise<Expanse> {
     return this.expansesService.deleteExpanse(id);
   }
-
-  @UseGuards(JwtAuthenticationGuard)
-  @Get('user-expanses/:id')
-  async getExpansesByUserId(@Param('id') id: number) {
-    return this.expansesService.getExpansesByUserId(id);
-  }
 }

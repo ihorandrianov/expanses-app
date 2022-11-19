@@ -53,7 +53,7 @@ export class UsersService {
   async getUserExpanses(
     where: Prisma.UserWhereUniqueInput,
   ): Promise<{ expanses: Expanse[] }> {
-    return this.prisma.user.findUnique({
+    return await this.prisma.user.findUnique({
       where,
       select: { expanses: true },
     });

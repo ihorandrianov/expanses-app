@@ -46,10 +46,4 @@ export class ExpansesService {
       },
     });
   }
-
-  async getExpansesByUserId(id: number): Promise<Expanse[]> {
-    return this.prisma.expanse.findMany({
-      where: { userId: id },
-    });
-  }
 }
